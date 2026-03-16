@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import type { Enemy } from '../models/Enemy';
 import api from '../services/api';
+import { Card } from '../components/Card';
+import { Button } from '../components/Button';
+import { Badge } from '../components/Badge';
 import './EnemyDetailPage.css';
 
 export default function EnemyDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const [enemy, setEnemy] = useState<Enemy | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,89 +36,121 @@ export default function EnemyDetailPage() {
   }, [id]);
 
   if (loading) {
-    return <div className="loading">Loading enemy details...</div>;
+    return (
+      <div className="container">
+        <div className="loading-state">
+          <p>Loading enemy details...</p>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <div className="error-container">
-        <div className="error">Error: {error}</div>
-        <button onClick={() => navigate('/')}>Back to List</button>
+      <div className="container">
+        <div className="error-state">
+          <p>Error: {error}</p>
+          <Link to="/">
+            <Button variant="primary">Back to Enemies</Button>
+          </Link>
+        </div>
       </div>
     );
   }
 
   if (!enemy) {
     return (
-      <div className="error-container">
-        <div className="error">Enemy not found</div>
-        <button onClick={() => navigate('/')}>Back to List</button>
+      <div className="container">
+        <div className="error-state">
+          <p>Enemy not found</p>
+          <Link to="/">
+            <Button variant="primary">Back to Enemies</Button>
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="enemy-detail-container">
-      <button className="back-btn" onClick={() => navigate('/')}>← Back to Enemies</button>
-      
-      <div className="enemy-detail">
-        <h1>{enemy.name}</h1>
-        <p className="description">{enemy.description}</p>
+    <div className="enemy-detail-page">
+      <div className="container">
+        <Link to="/">
+          <Button variant="secondary" size="md">
+            ← Back to Enemies
+          </Button>
+        </Link>
 
-        <div className="stats-section">
-          <h2>Stats</h2>
-          <div className="stats-grid">
-            <div className="stat-block">
-              <span className="stat-label">Health</span>
-              <span className="stat-number">{enemy.health}</span>
-            </div>
-            <div className="stat-block">
-              <span className="stat-label">Attack</span>
-              <span className="stat-number">{enemy.attack}</span>
-            </div>
-            <div className="stat-block">
-              <span className="stat-label">Defense</span>
-              <span className="stat-number">{enemy.defense}</span>
-            </div>
-            <div className="stat-block">
-              <span className="stat-label">Experience Reward</span>
-              <span className="stat-number">{enemy.experience}</span>
-            </div>
-          </div>
+        <div className="detail-header">
+          <h1>{enemy.name}</h1>
+          <p className="enemy-description">{enemy.description}</p>
         </div>
 
-        {enemy.drops && enemy.drops.length > 0 && (
-          <div className="drops-section">
-            <h2>Loot Drops</h2>
-            <table className="drops-table">
-              <thead>
-                <tr>
-                  <th>Item</th>
-                  <th>Drop Rate</th>
-                  <th>Quantity</th>
-                </tr>
-              </thead>
-              <tbody>
-                {enemy.drops.map((drop, idx) => (
-                  <tr key={idx}>
-                    <td>{drop.itemName}</td>
-                    <td>{Math.round(drop.dropRate * 100)}%</td>
-                    <td>{drop.quantity}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+        <div className="detail-grid">
+          {/* Stats Section */}
+          <Card header="Core Stats" className="stats-card">
+            <div className="stat-block-grid">
+              <div className="stat-display">
+                <div className="stat-display-label">Health</div>
+                <div className="stat-display-bar">
+                  <div className="stat-bar-fill" style={{width: `${Math.min((enemy.health / 100) * 100, 100)}%`}}></div>
+                  <span className="stat-display-value">{enemy.health}</span>
+                </div>
+              </div>
 
-        {enemy.createdAt && (
-          <div className="metadata">
-            <p>Created: {new Date(enemy.createdAt).toLocaleDateString()}</p>
-            {enemy.updatedAt && (
-              <p>Updated: {new Date(enemy.updatedAt).toLocaleDateString()}</p>
-            )}
-          </div>
-        )}
+              <div className="stat-display">
+                <div className="stat-display-label">Attack</div>
+                <div className="stat-bar-fill" style={{width: `${Math.min((enemy.attack / 50) * 100, 100)}%`, backgroundColor: 'var(--color-accent-error)'}}></div>
+                <span className="stat-display-value">{enemy.attack}</span>
+              </div>
+
+              <div className="stat-display">
+                <div className="stat-display-label">Defense</div>
+                <div className="stat-bar-fill" style={{width: `${Math.min((enemy.defense / 50) * 100, 100)}%`, backgroundColor: 'var(--color-accent-info)'}}></div>
+                <span className="stat-display-value">{enemy.defense}</span>
+              </div>
+
+              <div className="stat-display">
+                <div className="stat-display-label">Experience</div>
+                <span className="stat-display-value">{enemy.experience} XP</span>
+              </div>
+            </div>
+          </Card>
+
+          {/* Drops Section */}
+          {enemy.drops && enemy.drops.length > 0 && (
+            <Card header="Loot Drops" className="drops-card">
+              <div className="drops-container">
+                {enemy.drops.map((drop, idx) => (
+                  <div key={idx} className="drop-item-detail">
+                    <div className="drop-info">
+                      <span className="drop-name">{drop.itemName}</span>
+                      <Badge variant="info">{Math.round(drop.dropRate * 100)}% chance</Badge>
+                    </div>
+                    <div className="drop-qty-detail">× {drop.quantity}</div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          )}
+
+          {/* Metadata Section */}
+          {enemy.createdAt && (
+            <Card header="Information" className="metadata-card">
+              <div className="metadata-content">
+                <div className="metadata-item">
+                  <span className="metadata-label">Created:</span>
+                  <span className="metadata-value">{new Date(enemy.createdAt).toLocaleDateString()}</span>
+                </div>
+                {enemy.updatedAt && (
+                  <div className="metadata-item">
+                    <span className="metadata-label">Updated:</span>
+                    <span className="metadata-value">{new Date(enemy.updatedAt).toLocaleDateString()}</span>
+                  </div>
+                )}
+              </div>
+            </Card>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -1,0 +1,81 @@
+/* CSS Variables - Design System */
+
+:root {
+  /* Colors - Primary */
+  --color-primary-dark: #1a1a2e;
+  --color-primary-neon: #7b3ff2;
+  --color-primary-green: #39ff14;
+  --color-primary-gray: #2a2a3e;
+
+  /* Colors - Accents */
+  --color-accent-error: #ef3b36;
+  --color-accent-warning: #ffd700;
+  --color-accent-info: #00d4ff;
+  --color-accent-success: #2d5016;
+
+  /* Colors - Neutral */
+  --color-text-primary: #e8e8e8;
+  --color-text-secondary: #a8a8a8;
+  --color-text-tertiary: #666666;
+  --color-bg-base: #1a1a2e;
+  --color-bg-secondary: #2a2a3e;
+  --color-border: #3a3a4e;
+
+  /* Colors - Surfaces */
+  --color-surface-card: #252538;
+  --color-surface-elevated: #353548;
+
+  /* Fonts */
+  --font-heading: 'Press Start 2P', monospace;
+  --font-body: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+  --font-mono: 'Courier New', monospace;
+
+  /* Font Sizes */
+  --font-size-xs: 11px;
+  --font-size-sm: 13px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
+  --font-size-3xl: 32px;
+  --font-size-4xl: 40px;
+  --font-size-h1: 40px;
+  --font-size-h2: 32px;
+  --font-size-h3: 24px;
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+
+  /* Line Height */
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.8;
+
+  /* Letter Spacing */
+  --letter-spacing-tight: -0.02em;
+  --letter-spacing-normal: 0em;
+  --letter-spacing-wide: 0.1em;
+
+  /* Breakpoints (for reference in JS) */
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 16px rgba(123, 63, 242, 0.2);
+  --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.8);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 300ms ease;
+}
