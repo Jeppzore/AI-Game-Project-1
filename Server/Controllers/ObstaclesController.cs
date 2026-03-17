@@ -13,11 +13,13 @@ namespace Server.Controllers;
 public class ObstaclesController : ControllerBase
 {
     private readonly IMongoDbService _mongoDbService;
+    private readonly IObstacleService _obstacleService;
     private readonly ILogger<ObstaclesController> _logger;
 
-    public ObstaclesController(IMongoDbService mongoDbService, ILogger<ObstaclesController> logger)
+    public ObstaclesController(IMongoDbService mongoDbService, IObstacleService obstacleService, ILogger<ObstaclesController> logger)
     {
         _mongoDbService = mongoDbService;
+        _obstacleService = obstacleService;
         _logger = logger;
     }
 
@@ -31,7 +33,7 @@ public class ObstaclesController : ControllerBase
         [FromQuery] string? sort = "name",
         [FromQuery] string? sortOrder = "asc",
         [FromQuery] string? type = null,
-        [FromQuery] string? difficulty = null,
+        [FromQuery] int? difficulty = null,
         [FromQuery] string? location = null,
         [FromQuery] string? search = null)
     {
@@ -47,14 +49,17 @@ public class ObstaclesController : ControllerBase
             if (!string.IsNullOrEmpty(type))
                 filter &= Builders<Obstacle>.Filter.Eq(o => o.Type, type);
 
-            if (!string.IsNullOrEmpty(difficulty))
-                filter &= Builders<Obstacle>.Filter.Eq(o => o.Difficulty, difficulty);
+            if (difficulty.HasValue)
+                filter &= Builders<Obstacle>.Filter.Eq(o => o.Difficulty, difficulty.Value);
 
             if (!string.IsNullOrEmpty(location))
                 filter &= Builders<Obstacle>.Filter.Eq(o => o.Location, location);
 
             if (!string.IsNullOrEmpty(search))
-                filter &= Builders<Obstacle>.Filter.Text(search);
+                filter &= Builders<Obstacle>.Filter.Or(
+                    Builders<Obstacle>.Filter.Regex(o => o.Name, $"/{search}/i"),
+                    Builders<Obstacle>.Filter.Regex(o => o.Description, $"/{search}/i")
+                );
 
             // Apply sorting
             var sortDef = sortOrder?.ToLower() == "desc"
@@ -99,8 +104,7 @@ public class ObstaclesController : ControllerBase
     {
         try
         {
-            var collection = _mongoDbService.GetObstaclesCollection();
-            var obstacle = await collection.Find(o => o.Id == id).FirstOrDefaultAsync();
+            var obstacle = await _obstacleService.GetObstacleAsync(id);
 
             if (obstacle == null)
                 return NotFound(new ApiResponse<object> { Error = "Obstacle not found" });
@@ -113,6 +117,172 @@ public class ObstaclesController : ControllerBase
             return StatusCode(500, new ApiResponse<object>
             {
                 Error = "An error occurred while fetching the obstacle"
+            });
+        }
+    }
+
+    /// <summary>
+    /// Get challenge details for an obstacle (question, difficulty, etc.).
+    /// </summary>
+    [HttpGet("{id}/challenge")]
+    public async Task<ActionResult<ApiResponse<object>>> GetObstacleChallenge(string id)
+    {
+        try
+        {
+            var obstacle = await _obstacleService.GetObstacleAsync(id);
+
+            if (obstacle == null)
+                return NotFound(new ApiResponse<object> { Error = "Obstacle not found" });
+
+            var challengeData = new
+            {
+                obstacle.Type,
+                obstacle.Name,
+                obstacle.Description,
+                obstacle.Difficulty,
+                challenge = obstacle.Type.ToLower() switch
+                {
+                    "riddle" => new
+                    {
+                        question = (obstacle.ChallengeData as RiddleChallenge)?.Question,
+                        hintsAvailable = ((obstacle.ChallengeData as RiddleChallenge)?.Hints?.Count) ?? 0
+                    },
+                    "locked_chest" => new
+                    {
+                        lockDifficulty = (obstacle.ChallengeData as ChestChallenge)?.LockDifficulty,
+                        requiresKey = !string.IsNullOrEmpty((obstacle.ChallengeData as ChestChallenge)?.RequiredKeyId)
+                    },
+                    "trapped_door" => new
+                    {
+                        triggerType = (obstacle.ChallengeData as TrapChallenge)?.TriggerType,
+                        detectionDifficulty = (obstacle.ChallengeData as TrapChallenge)?.DetectionDifficulty,
+                        disarmDifficulty = (obstacle.ChallengeData as TrapChallenge)?.DisarmDifficulty
+                    },
+                    "puzzle" => new
+                    {
+                        stepCount = ((obstacle.ChallengeData as PuzzleChallenge)?.Steps?.Count) ?? 0,
+                        requiredItems = (obstacle.ChallengeData as PuzzleChallenge)?.RequiredItems
+                    },
+                    _ => null
+                }
+            };
+
+            return Ok(new ApiResponse<object> { Data = challengeData });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching challenge for obstacle {Id}", id);
+            return StatusCode(500, new ApiResponse<object>
+            {
+                Error = "An error occurred while fetching the challenge"
+            });
+        }
+    }
+
+    /// <summary>
+    /// Get hints for a riddle obstacle.
+    /// </summary>
+    [HttpGet("{id}/hints")]
+    public async Task<ActionResult<ApiResponse<List<string>>>> GetObstacleHints(string id, [FromQuery] int hintIndex = 0)
+    {
+        try
+        {
+            var obstacle = await _obstacleService.GetObstacleAsync(id);
+
+            if (obstacle == null)
+                return NotFound(new ApiResponse<object> { Error = "Obstacle not found" });
+
+            if (obstacle.Type.ToLower() != "riddle")
+                return BadRequest(new ApiResponse<object> { Error = "This obstacle does not support hints" });
+
+            var riddle = obstacle.ChallengeData as RiddleChallenge;
+            if (riddle?.Hints == null || riddle.Hints.Count == 0)
+                return Ok(new ApiResponse<List<string>> { Data = new List<string>() });
+
+            var hints = riddle.Hints
+                .Take(Math.Max(1, hintIndex + 1))
+                .ToList();
+
+            return Ok(new ApiResponse<List<string>> { Data = hints });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching hints for obstacle {Id}", id);
+            return StatusCode(500, new ApiResponse<object>
+            {
+                Error = "An error occurred while fetching hints"
+            });
+        }
+    }
+
+    /// <summary>
+    /// Submit an attempt/solution for an obstacle.
+    /// </summary>
+    [HttpPost("{id}/attempt")]
+    public async Task<ActionResult<ApiResponse<ObstacleResult>>> AttemptObstacle(string id, [FromBody] AttemptObstacleRequest request)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(request.PlayerId))
+                return BadRequest(new ApiResponse<object> { Error = "PlayerId is required" });
+
+            if (string.IsNullOrWhiteSpace(request.Solution))
+                return BadRequest(new ApiResponse<object> { Error = "Solution is required" });
+
+            var result = await _obstacleService.AttemptObstacleAsync(request.PlayerId, id, request.Solution);
+
+            return Ok(new ApiResponse<ObstacleResult> { Data = result });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error attempting obstacle {Id}", id);
+            return StatusCode(500, new ApiResponse<object>
+            {
+                Error = "An error occurred while processing the attempt"
+            });
+        }
+    }
+
+    /// <summary>
+    /// Get a player's attempt history for an obstacle.
+    /// </summary>
+    [HttpGet("{id}/attempts/{playerId}")]
+    public async Task<ActionResult<ApiResponse<List<ObstacleAttempt>>>> GetPlayerAttempts(string id, string playerId)
+    {
+        try
+        {
+            var attempts = await _obstacleService.GetPlayerAttemptsAsync(playerId, id);
+
+            return Ok(new ApiResponse<List<ObstacleAttempt>> { Data = attempts });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching attempts for player {PlayerId} on obstacle {Id}", playerId, id);
+            return StatusCode(500, new ApiResponse<object>
+            {
+                Error = "An error occurred while fetching attempts"
+            });
+        }
+    }
+
+    /// <summary>
+    /// Get all player attempts across all obstacles.
+    /// </summary>
+    [HttpGet("player/{playerId}/history")]
+    public async Task<ActionResult<ApiResponse<List<ObstacleAttempt>>>> GetPlayerAttemptHistory(string playerId)
+    {
+        try
+        {
+            var attempts = await _obstacleService.GetPlayerAllAttemptsAsync(playerId);
+
+            return Ok(new ApiResponse<List<ObstacleAttempt>> { Data = attempts });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching attempt history for player {PlayerId}", playerId);
+            return StatusCode(500, new ApiResponse<object>
+            {
+                Error = "An error occurred while fetching attempt history"
             });
         }
     }
@@ -138,8 +308,7 @@ public class ObstaclesController : ControllerBase
                 Difficulty = request.Difficulty,
                 Description = request.Description,
                 ImageUrl = request.ImageUrl,
-                Location = request.Location,
-                SolveMethod = request.SolveMethod
+                Location = request.Location
             };
 
             var collection = _mongoDbService.GetObstaclesCollection();
@@ -180,8 +349,8 @@ public class ObstaclesController : ControllerBase
             if (!string.IsNullOrEmpty(request.Type))
                 updateDefinition = updateDefinition.Set(o => o.Type, request.Type);
 
-            if (!string.IsNullOrEmpty(request.Difficulty))
-                updateDefinition = updateDefinition.Set(o => o.Difficulty, request.Difficulty);
+            if (request.Difficulty.HasValue)
+                updateDefinition = updateDefinition.Set(o => o.Difficulty, request.Difficulty.Value);
 
             if (!string.IsNullOrEmpty(request.Description))
                 updateDefinition = updateDefinition.Set(o => o.Description, request.Description);
@@ -191,9 +360,6 @@ public class ObstaclesController : ControllerBase
 
             if (!string.IsNullOrEmpty(request.Location))
                 updateDefinition = updateDefinition.Set(o => o.Location, request.Location);
-
-            if (!string.IsNullOrEmpty(request.SolveMethod))
-                updateDefinition = updateDefinition.Set(o => o.SolveMethod, request.SolveMethod);
 
             var updatedObstacle = await collection.FindOneAndUpdateAsync(
                 o => o.Id == id,
@@ -238,4 +404,13 @@ public class ObstaclesController : ControllerBase
             });
         }
     }
+}
+
+/// <summary>
+/// Request to attempt an obstacle.
+/// </summary>
+public class AttemptObstacleRequest
+{
+    public string PlayerId { get; set; } = string.Empty;
+    public string Solution { get; set; } = string.Empty;
 }

@@ -11,7 +11,7 @@ public class CreateObstacleRequest
     [Required(ErrorMessage = "Type is required")]
     public string Type { get; set; } = string.Empty;
 
-    public string Difficulty { get; set; } = string.Empty;
+    public int Difficulty { get; set; } = 1;
 
     [StringLength(2000)]
     public string Description { get; set; } = string.Empty;
@@ -19,9 +19,6 @@ public class CreateObstacleRequest
     public string ImageUrl { get; set; } = string.Empty;
 
     public string Location { get; set; } = string.Empty;
-
-    [StringLength(2000)]
-    public string SolveMethod { get; set; } = string.Empty;
 }
 
 public class UpdateObstacleRequest
@@ -31,7 +28,7 @@ public class UpdateObstacleRequest
 
     public string? Type { get; set; }
 
-    public string? Difficulty { get; set; }
+    public int? Difficulty { get; set; }
 
     [StringLength(2000)]
     public string? Description { get; set; }
@@ -39,7 +36,4 @@ public class UpdateObstacleRequest
     public string? ImageUrl { get; set; }
 
     public string? Location { get; set; }
-
-    [StringLength(2000)]
-    public string? SolveMethod { get; set; }
 }

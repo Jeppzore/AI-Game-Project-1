@@ -587,4 +587,92 @@ namespace NightmaresWiki.Models
         [BsonElement("entityName")]
         public string EntityName { get; set; }
     }
+
+    /// <summary>
+    /// Represents a crafting recipe that can be executed by players.
+    /// </summary>
+    [BsonIgnoreExtraElements]
+    public class CraftingRecipe
+    {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public ObjectId Id { get; set; }
+
+        [BsonElement("name")]
+        public string Name { get; set; }
+
+        [BsonElement("description")]
+        public string Description { get; set; }
+
+        [BsonElement("requiredItems")]
+        public List<CraftingRequirement> RequiredItems { get; set; } = new List<CraftingRequirement>();
+
+        [BsonElement("outputItem")]
+        public CraftingOutput OutputItem { get; set; }
+
+        [BsonElement("levelRequirement")]
+        public int LevelRequirement { get; set; }
+
+        [BsonElement("skillRequirement")]
+        public string SkillRequirement { get; set; }
+
+        [BsonElement("skillLevel")]
+        public int SkillLevel { get; set; }
+
+        [BsonElement("cooldownSeconds")]
+        public int CooldownSeconds { get; set; }
+
+        [BsonElement("xpReward")]
+        public int XpReward { get; set; }
+
+        [BsonElement("createdAt")]
+        public DateTime CreatedAt { get; set; }
+
+        [BsonElement("updatedAt")]
+        public DateTime UpdatedAt { get; set; }
+    }
+
+    /// <summary>
+    /// Represents a single required item for crafting.
+    /// </summary>
+    public class CraftingRequirement
+    {
+        [BsonElement("itemId")]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public ObjectId ItemId { get; set; }
+
+        [BsonElement("quantity")]
+        public int Quantity { get; set; }
+    }
+
+    /// <summary>
+    /// Represents the output of a crafting recipe.
+    /// </summary>
+    public class CraftingOutput
+    {
+        [BsonElement("itemId")]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public ObjectId ItemId { get; set; }
+
+        [BsonElement("quantity")]
+        public int Quantity { get; set; }
+    }
+
+    /// <summary>
+    /// Result of a crafting operation.
+    /// </summary>
+    public class CraftingResult
+    {
+        [BsonElement("success")]
+        public bool Success { get; set; }
+
+        [BsonElement("resultItem")]
+        public Item ResultItem { get; set; }
+
+        [BsonElement("message")]
+        public string Message { get; set; }
+
+        [BsonElement("xpGained")]
+        public int XpGained { get; set; }
+    }
 }
