@@ -1,0 +1,540 @@
+{
+  "extraction_metadata": {
+    "source": "C:\\Repos\\NightmaresWiki",
+    "extraction_date": "2026-03-17",
+    "format": "MongoDB-ready JSON",
+    "purpose": "Database seeding for Nightmares Wiki project"
+  },
+  
+  "creatures": [
+    {
+      "id": "gaklorr",
+      "name": "Gaklorr",
+      "title": "Gaklorr, the Ironfist Tyrant",
+      "description": "Towering war-chief of the Broken Fang clan with a hulking green form, wielding a colossal spiked wooden mace. Slow but devastating attacks.",
+      "lore": "In the shadowed depths of the Bloodcrag Highlands, where the earth trembles with the echoes of battle, Gaklorr reigns as an unrelenting force of destruction. Towering over his kin, his hulking green form is clad in the scars of a thousand conquests, each mark a testament to his brutal victories. Wielding a colossal spiked wooden mace, crafted from the bones of ancient warlords and ironwood felled by his own hand, he crushes anything foolish enough to stand in his path. Once a war-chief of the Broken Fang clan, Gaklorr defied the elders, claiming that only the strongest should rule. In his defiance, he challenged their might, and in a single night of bloodshed, he took their lives, their crowns, and their power. Now, he roams the land as a living legend, his slow, deliberate steps striking fear into all who hear them. Though his movements may be ponderous, a single swing of his mighty weapon can shatter steel and stone alike.",
+      "type": ["Boss", "Orc"],
+      "image": "gaklorr.gif",
+      "combat": {
+        "health": 50,
+        "experience": 100,
+        "armor": 2,
+        "speed": 45,
+        "damage": {
+          "min": 5,
+          "max": 10
+        },
+        "aggroRange": 1000,
+        "immunities": [],
+        "abilities": ["Rallying Cry"]
+      },
+      "loot": [
+        {
+          "itemName": "Copper Coin",
+          "quantity": {
+            "min": 1,
+            "max": 3
+          },
+          "dropChance": 1.0
+        },
+        {
+          "itemName": "Silver Coin",
+          "quantity": {
+            "min": 1,
+            "max": 2
+          },
+          "dropChance": 1.0
+        }
+      ],
+      "behavior": "Charges against enemies from a far distance. He relies mainly on heavy swings from his spiked wooden mace to deal devastating blows (melee). When in danger, Gaklorr lets out a rallying cry which makes him faster and stronger.",
+      "difficulty": "Boss",
+      "created_at": "2026-03-17T00:00:00Z",
+      "updated_at": "2026-03-17T00:00:00Z"
+    },
+    {
+      "id": "greenslime",
+      "name": "Green Slime",
+      "description": "A green slime. Not very dangerous.",
+      "type": ["Slime"],
+      "image": "greenslimegif.gif",
+      "combat": {
+        "health": 5,
+        "experience": 5,
+        "armor": 0,
+        "speed": 30,
+        "damage": {
+          "min": 1,
+          "max": 1
+        },
+        "aggroRange": 680,
+        "immunities": ["Poison"],
+        "abilities": []
+      },
+      "loot": [
+        {
+          "itemName": "Copper Coin",
+          "quantity": {
+            "min": 1,
+            "max": 1
+          },
+          "dropChance": 1.0
+        },
+        {
+          "itemName": "Silver Coin",
+          "quantity": {
+            "min": 1,
+            "max": 1
+          },
+          "dropChance": 1.0
+        }
+      ],
+      "behavior": "Green Slimes jump towards their enemies when threatened. They attack from a close distance (Melee) and use no other abilities. Slimes are immune to poison.",
+      "difficulty": "Easy",
+      "created_at": "2026-03-17T00:00:00Z",
+      "updated_at": "2026-03-17T00:00:00Z"
+    },
+    {
+      "id": "redmushroom",
+      "name": "Red Mushroom",
+      "description": "A deadly but fragile mushroom. Releases spores when threatened.",
+      "type": ["Mushroom"],
+      "image": "redMushroom.gif",
+      "combat": {
+        "health": 4,
+        "experience": 10,
+        "armor": 0,
+        "speed": 0,
+        "damage": {
+          "min": 2,
+          "max": 2
+        },
+        "aggroRange": 670,
+        "immunities": [],
+        "abilities": ["Spore Projectile"]
+      },
+      "loot": [
+        {
+          "itemName": "Copper Coin",
+          "quantity": {
+            "min": 1,
+            "max": 3
+          },
+          "dropChance": 1.0
+        },
+        {
+          "itemName": "Silver Coin",
+          "quantity": {
+            "min": 1,
+            "max": 2
+          },
+          "dropChance": 1.0
+        }
+      ],
+      "behavior": "Red Mushrooms stand still and attack their enemies when threatened. They attack from a distance (Ranged), shooting out a projectile (spore). Red Mushrooms have no immunities.",
+      "difficulty": "Easy",
+      "created_at": "2026-03-17T00:00:00Z",
+      "updated_at": "2026-03-17T00:00:00Z"
+    }
+  ],
+
+  "items": [
+    {
+      "id": "club",
+      "name": "Club",
+      "category": "weapon_melee",
+      "type": "Melee Weapon",
+      "description": "As bad as it gets.",
+      "image": "club.png",
+      "stats": {
+        "damage": { "min": 1, "max": 1 },
+        "speed": 60,
+        "hands": 1
+      },
+      "value": { "gold": 5, "rarity": "common" },
+      "sources": [
+        { "type": "creature_drop", "creatureName": "Green Slime", "dropChance": 0.5 }
+      ],
+      "created_at": "2026-03-17T00:00:00Z",
+      "updated_at": "2026-03-17T00:00:00Z"
+    },
+    {
+      "id": "bronze-sword",
+      "name": "Bronze Sword",
+      "category": "weapon_melee",
+      "type": "Melee Weapon",
+      "description": "A good starter weapon.",
+      "image": "bronzeSword.png",
+      "stats": {
+        "damage": { "min": 1, "max": 2 },
+        "speed": 80,
+        "hands": 1
+      },
+      "value": { "gold": 50, "rarity": "common" },
+      "sources": [
+        { "type": "creature_drop", "creatureName": "Green Slime", "dropChance": 0.3 },
+        { "type": "creature_drop", "creatureName": "Red Mushroom", "dropChance": 0.3 }
+      ],
+      "crafting": {
+        "craftable": true,
+        "recipes": [
+          {
+            "materials": [{ "materialName": "Bronze Ore", "quantity": 2 }],
+            "skill": "Smithing",
+            "skillLevel": 1
+          }
+        ]
+      },
+      "created_at": "2026-03-17T00:00:00Z",
+      "updated_at": "2026-03-17T00:00:00Z"
+    },
+    {
+      "id": "iron-sword",
+      "name": "Iron Sword",
+      "category": "weapon_melee",
+      "type": "Melee Weapon",
+      "description": "A simple but effective weapon. Fast and reliable.",
+      "image": "ironSword.png",
+      "stats": {
+        "damage": { "min": 2, "max": 4 },
+        "speed": 90,
+        "hands": 1
+      },
+      "value": { "gold": 150, "rarity": "uncommon" },
+      "sources": [
+        { "type": "creature_drop", "creatureName": "Gaklorr", "dropChance": 0.5 }
+      ],
+      "created_at": "2026-03-17T00:00:00Z",
+      "updated_at": "2026-03-17T00:00:00Z"
+    },
+    {
+      "id": "bow",
+      "name": "Bow",
+      "category": "weapon_ranged",
+      "type": "Ranged Weapon",
+      "description": "A simple but effective weapon. Fast and reliable.",
+      "image": "bow.png",
+      "stats": {
+        "damage": { "min": 1, "max": 5 },
+        "speed": 50,
+        "hands": 2
+      },
+      "value": { "gold": 150, "rarity": "uncommon" },
+      "sources": [
+        { "type": "creature_drop", "creatureName": "Red Mushroom", "dropChance": 0.4 }
+      ],
+      "crafting": {
+        "craftable": true,
+        "recipes": []
+      },
+      "created_at": "2026-03-17T00:00:00Z",
+      "updated_at": "2026-03-17T00:00:00Z"
+    },
+    {
+      "id": "steel-chest-piece",
+      "name": "Steel Chest Piece",
+      "category": "armor_chest",
+      "type": "Chest Armor",
+      "description": "A basic Steel Chest Piece.",
+      "image": "steelChestPiece.png",
+      "stats": {
+        "armor": 2
+      },
+      "value": { "gold": 75, "rarity": "common" },
+      "sources": [
+        { "type": "creature_drop", "creatureName": "Green Slime", "dropChance": 0.3 },
+        { "type": "creature_drop", "creatureName": "Red Mushroom", "dropChance": 0.3 }
+      ],
+      "created_at": "2026-03-17T00:00:00Z",
+      "updated_at": "2026-03-17T00:00:00Z"
+    },
+    {
+      "id": "gold-chest-piece",
+      "name": "Gold Chest Piece",
+      "category": "armor_chest",
+      "type": "Chest Armor",
+      "description": "A basic Gold Chest Piece.",
+      "image": "goldChestPiece.png",
+      "stats": {
+        "armor": 3
+      },
+      "value": { "gold": 150, "rarity": "uncommon" },
+      "sources": [
+        { "type": "creature_drop", "creatureName": "Green Slime", "dropChance": 0.2 },
+        { "type": "creature_drop", "creatureName": "Red Mushroom", "dropChance": 0.2 }
+      ],
+      "created_at": "2026-03-17T00:00:00Z",
+      "updated_at": "2026-03-17T00:00:00Z"
+    },
+    {
+      "id": "steel-helmet",
+      "name": "Steel Helmet",
+      "category": "armor_helmet",
+      "type": "Helmet",
+      "description": "A steel helmet.",
+      "image": "steelHelmet.png",
+      "stats": {
+        "armor": 2
+      },
+      "value": { "gold": 75, "rarity": "common" },
+      "sources": [
+        { "type": "creature_drop", "creatureName": "Green Slime", "dropChance": 0.3 },
+        { "type": "creature_drop", "creatureName": "Red Mushroom", "dropChance": 0.3 }
+      ],
+      "created_at": "2026-03-17T00:00:00Z",
+      "updated_at": "2026-03-17T00:00:00Z"
+    },
+    {
+      "id": "gold-helmet",
+      "name": "Gold Helmet",
+      "category": "armor_helmet",
+      "type": "Helmet",
+      "description": "A Gold helmet.",
+      "image": "goldHelmet.png",
+      "stats": {
+        "armor": 4
+      },
+      "value": { "gold": 150, "rarity": "uncommon" },
+      "sources": [
+        { "type": "creature_drop", "creatureName": "Green Slime", "dropChance": 0.2 },
+        { "type": "creature_drop", "creatureName": "Red Mushroom", "dropChance": 0.2 }
+      ],
+      "created_at": "2026-03-17T00:00:00Z",
+      "updated_at": "2026-03-17T00:00:00Z"
+    },
+    {
+      "id": "steel-legs",
+      "name": "Steel Legs",
+      "category": "armor_legs",
+      "type": "Leg Armor",
+      "description": "A basic Legs.",
+      "image": "steelLegs.png",
+      "stats": {
+        "armor": 2
+      },
+      "value": { "gold": 75, "rarity": "common" },
+      "sources": [
+        { "type": "creature_drop", "creatureName": "Green Slime", "dropChance": 0.3 },
+        { "type": "creature_drop", "creatureName": "Red Mushroom", "dropChance": 0.3 }
+      ],
+      "created_at": "2026-03-17T00:00:00Z",
+      "updated_at": "2026-03-17T00:00:00Z"
+    },
+    {
+      "id": "gold-legs",
+      "name": "Gold Legs",
+      "category": "armor_legs",
+      "type": "Leg Armor",
+      "description": "A pair of Gold Legs.",
+      "image": "goldLegs.png",
+      "stats": {
+        "armor": 4
+      },
+      "value": { "gold": 150, "rarity": "uncommon" },
+      "sources": [
+        { "type": "creature_drop", "creatureName": "Green Slime", "dropChance": 0.2 },
+        { "type": "creature_drop", "creatureName": "Red Mushroom", "dropChance": 0.2 }
+      ],
+      "created_at": "2026-03-17T00:00:00Z",
+      "updated_at": "2026-03-17T00:00:00Z"
+    },
+    {
+      "id": "bronze-key",
+      "name": "Bronze Key",
+      "category": "tool_key",
+      "type": "Key",
+      "description": "",
+      "image": "bronzeKey.png",
+      "stats": {},
+      "value": { "gold": 0, "rarity": "rare" },
+      "sources": [],
+      "note": "Content needs to be populated"
+    },
+    {
+      "id": "silver-key",
+      "name": "Silver Key",
+      "category": "tool_key",
+      "type": "Key",
+      "description": "",
+      "image": "silverKey.png",
+      "stats": {},
+      "value": { "gold": 0, "rarity": "rare" },
+      "sources": [],
+      "note": "Content needs to be populated"
+    },
+    {
+      "id": "golden-key",
+      "name": "Golden Key",
+      "category": "tool_key",
+      "type": "Key",
+      "description": "",
+      "image": "goldenKey.png",
+      "stats": {},
+      "value": { "gold": 0, "rarity": "epic" },
+      "sources": [],
+      "note": "Content needs to be populated"
+    }
+  ],
+
+  "npcs": [
+    {
+      "id": "redmushroom_npc",
+      "name": "Red Mushroom",
+      "description": "A mysterious NPC entity",
+      "image": "redMushroom.png",
+      "profile": {
+        "role": "Not specified",
+        "location": "Not specified"
+      },
+      "trades": [],
+      "quests": [],
+      "dialogue": [],
+      "relationships": {
+        "friends": [],
+        "enemies": [],
+        "faction": "Unknown"
+      },
+      "note": "This NPC entry needs significant development. Add role, location, trades, and dialogue.",
+      "created_at": "2026-03-17T00:00:00Z",
+      "updated_at": "2026-03-17T00:00:00Z"
+    }
+  ],
+
+  "assets": {
+    "images": {
+      "total_count": 79,
+      "categories": {
+        "creatures": [
+          "gaklorr.gif",
+          "greenslimegif.gif",
+          "redMushroom.gif",
+          "goblin.gif",
+          "goblinRaider.gif",
+          "redSlime.gif"
+        ],
+        "weapons": [
+          "club.png",
+          "bronzeSword.png",
+          "ironSword.png",
+          "2hBronzeSword.png",
+          "2hIronSword.png",
+          "bloodDagger.png",
+          "poisonDagger.png",
+          "bow.png",
+          "enchantedIronBow.png",
+          "ironAxe.png",
+          "greatAxe.png",
+          "spikedClub.png"
+        ],
+        "armor": [
+          "steelChestPiece.png",
+          "goldChestPiece.png",
+          "steelHelmet.png",
+          "goldHelmet.png",
+          "steelLegs.png",
+          "goldLegs.png",
+          "steelFullPlate.png",
+          "goldFullPlate.png",
+          "enchantedSteelFullPlate.png",
+          "enchantedGoldFullPlate.png",
+          "enchantedSteelHelmet.png",
+          "enchantedGoldHelmet.png",
+          "enchantedSteelLegs.png",
+          "enchantedGoldLegs.png",
+          "studdedChestPiece.png",
+          "studdedHelmet.png",
+          "studdedLegs.png",
+          "bronzeChest.png",
+          "goldenChest.png",
+          "silverChest.png"
+        ],
+        "currency": [
+          "copperCoin.png",
+          "silverCoin.png",
+          "goldCoin.png",
+          "crystalCoin.png",
+          "fieryCoin.png",
+          "platinumCoin.png"
+        ],
+        "resources": [
+          "tinStone.png",
+          "tinVein.png",
+          "copperStone.png",
+          "copperVein.png",
+          "graniteStone.png",
+          "graniteStoneSmall.png",
+          "graniteStoneMedium.png",
+          "mediumStone.png"
+        ],
+        "ui": [
+          "damage.png",
+          "heart.png",
+          "exp.png",
+          "defaultarmor.png",
+          "speed.png",
+          "poison.png",
+          "aggro.png",
+          "armor.png",
+          "weapon.png",
+          "home.png"
+        ],
+        "environment": [
+          "berryPineTree.png",
+          "blueBerry.png",
+          "blueBerryBush.png",
+          "seaBerry.png",
+          "seaBerryBush.png",
+          "crate.png",
+          "bossTest.png",
+          "videoimage.png"
+        ],
+        "keys": [
+          "bronzeKey.png",
+          "silverKey.png",
+          "goldenKey.png"
+        ]
+      }
+    },
+    "audio": {
+      "total_count": 3,
+      "files": [
+        {
+          "filename": "campfire.mp3",
+          "type": "ambient_sound",
+          "description": "Campfire ambience"
+        },
+        {
+          "filename": "main.mp3",
+          "type": "background_music",
+          "description": "Main theme music"
+        },
+        {
+          "filename": "music.html",
+          "type": "music_player",
+          "description": "Music player page"
+        }
+      ]
+    }
+  },
+
+  "data_quality_summary": {
+    "completeness_by_category": {
+      "creatures": "95%",
+      "items": "70%",
+      "npcs": "10%",
+      "assets": "90%"
+    },
+    "critical_gaps": [
+      "All key item files (3) are empty",
+      "Only 1 NPC documented with minimal information",
+      "No obstacles implemented",
+      "No guides written",
+      "Trade and crafting information is incomplete"
+    ],
+    "priority_actions": [
+      "Populate bronze, silver, and golden key files",
+      "Develop at least 5 NPCs with full profiles",
+      "Fill in missing trade and crafting information",
+      "Standardize all filenames and image paths"
+    ]
+  }
+}

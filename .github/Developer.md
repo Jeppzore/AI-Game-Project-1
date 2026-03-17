@@ -6,7 +6,7 @@ Developers are responsible for implementing features, fixing bugs, and maintaini
 
 ## Responsibilities
 
-- Always ask me before pushing any coode
+- Always ask me before pushing any code
 - Implement features according to specifications
 - Write clean, maintainable code following project conventions
 - Create and maintain unit tests for new functionality
